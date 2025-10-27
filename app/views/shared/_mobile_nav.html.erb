@@ -1,0 +1,148 @@
+<% if turbo_native_app? %>
+  <!-- Mobile App Top Bar -->
+  <div class="bg-primary-600 sticky top-0 z-50 shadow-md">
+    <div class="flex items-center justify-between px-4 py-3">
+      <!-- Logo -->
+      <div class="flex items-center space-x-2">
+        <div class="h-8 w-8 bg-white rounded-lg flex items-center justify-center">
+          <svg class="h-5 w-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </div>
+        <span class="text-lg font-bold text-white">BookMyDoc</span>
+      </div>
+
+      <!-- Right Side Actions -->
+      <div class="flex items-center space-x-2">
+        <% if logged_in? %>
+          <!-- Notifications -->
+          <%= link_to notifications_path, class: "p-2 rounded-lg text-white hover:bg-primary-700 relative" do %>
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <% if current_user.unread_notifications_count > 0 %>
+              <span class="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+            <% end %>
+          <% end %>
+
+          <!-- Messages -->
+          <%= link_to messages_path, class: "p-2 rounded-lg text-white hover:bg-primary-700 relative" do %>
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <% if current_user.unread_messages_count > 0 %>
+              <span class="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+            <% end %>
+          <% end %>
+
+          <!-- Profile Icon -->
+          <%= link_to notifications_path, class: "p-1 rounded-lg text-white hover:bg-primary-700" do %>
+            <% if current_user.avatar.attached? %>
+              <%= image_tag current_user.avatar, class: "h-8 w-8 rounded-full object-cover border-2 border-white" %>
+            <% else %>
+              <div class="h-8 w-8 rounded-full bg-white flex items-center justify-center border-2 border-white">
+                <span class="text-sm font-bold text-primary-600"><%= current_user.full_name[0].upcase %></span>
+              </div>
+            <% end %>
+          <% end %>
+        <% else %>
+          <!-- Login Button -->
+          <%= link_to login_path, class: "px-4 py-2 bg-white text-primary-600 rounded-lg font-medium text-sm hover:bg-primary-50 transition-colors" do %>
+            Login
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <% if logged_in? %>
+    <!-- Mobile Bottom Navigation -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 shadow-lg">
+      <div class="grid <%= current_patient? ? 'grid-cols-4' : current_doctor? ? 'grid-cols-4' : 'grid-cols-3' %> h-16">
+        <% if current_patient? %>
+          <%= link_to patients_dashboard_path, class: "flex flex-col items-center justify-center text-xs #{current_page?(patients_dashboard_path) ? 'text-primary-600' : 'text-gray-600'}" do %>
+            <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span>Home</span>
+          <% end %>
+
+          <%= link_to doctors_path, class: "flex flex-col items-center justify-center text-xs #{current_page?(doctors_path) ? 'text-primary-600' : 'text-gray-600'}" do %>
+            <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <span>Doctors</span>
+          <% end %>
+
+          <%= link_to appointments_path, class: "flex flex-col items-center justify-center text-xs #{current_page?(appointments_path) ? 'text-primary-600' : 'text-gray-600'}" do %>
+            <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>Appointments</span>
+          <% end %>
+
+          <%= link_to new_symptom_report_path, class: "flex flex-col items-center justify-center text-xs #{current_page?(new_symptom_report_path) ? 'text-primary-600' : 'text-gray-600'}" do %>
+            <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <span>Symptoms</span>
+          <% end %>
+
+        <% elsif current_doctor? %>
+          <%= link_to doctors_dashboard_path, class: "flex flex-col items-center justify-center text-xs #{current_page?(doctors_dashboard_path) ? 'text-primary-600' : 'text-gray-600'}" do %>
+            <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span>Home</span>
+          <% end %>
+
+          <%= link_to appointments_path, class: "flex flex-col items-center justify-center text-xs #{current_page?(appointments_path) ? 'text-primary-600' : 'text-gray-600'}" do %>
+            <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>Appointments</span>
+          <% end %>
+
+          <%= link_to test_orders_path, class: "flex flex-col items-center justify-center text-xs #{current_page?(test_orders_path) ? 'text-primary-600' : 'text-gray-600'}" do %>
+            <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>Tests</span>
+          <% end %>
+
+          <%= link_to doctors_appointment_slots_path, class: "flex flex-col items-center justify-center text-xs #{current_page?(doctors_appointment_slots_path) ? 'text-primary-600' : 'text-gray-600'}" do %>
+            <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Availability</span>
+          <% end %>
+
+        <% elsif current_admin? %>
+          <%= link_to admin_dashboard_path, class: "flex flex-col items-center justify-center text-xs #{current_page?(admin_dashboard_path) ? 'text-primary-600' : 'text-gray-600'}" do %>
+            <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span>Home</span>
+          <% end %>
+
+          <%= link_to admin_users_path, class: "flex flex-col items-center justify-center text-xs #{current_page?(admin_users_path) ? 'text-primary-600' : 'text-gray-600'}" do %>
+            <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <span>Users</span>
+          <% end %>
+
+          <%= link_to admin_appointments_path, class: "flex flex-col items-center justify-center text-xs #{current_page?(admin_appointments_path) ? 'text-primary-600' : 'text-gray-600'}" do %>
+            <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>Appointments</span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Bottom Padding to account for fixed bottom nav -->
+    <div class="h-16"></div>
+  <% end %>
+<% end %>

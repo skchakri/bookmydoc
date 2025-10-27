@@ -1,0 +1,19 @@
+<%
+  is_sender = message.sender == current_user
+  alignment_class = is_sender ? "justify-end" : "justify-start"
+  bg_class = is_sender ? "bg-primary-600 text-white" : "bg-gray-200 text-gray-900"
+%>
+
+<div class="flex <%= alignment_class %>">
+  <div class="max-w-[70%]">
+    <div class="<%= bg_class %> rounded-lg px-4 py-2">
+      <p class="text-sm"><%= message.content %></p>
+    </div>
+    <p class="text-xs text-gray-500 mt-1 <%= is_sender ? 'text-right' : 'text-left' %>">
+      <%= message.created_at.strftime("%I:%M %p") %>
+      <% if is_sender && message.read? %>
+        <span class="text-primary-600">• Read</span>
+      <% end %>
+    </p>
+  </div>
+</div>

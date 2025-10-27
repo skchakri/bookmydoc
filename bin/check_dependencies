@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+
+echo "======================================================================"
+echo "BookMyDoc Dependency Check"
+echo "======================================================================"
+echo ""
+
+# Function to check command
+check_command() {
+    if command -v $1 &> /dev/null; then
+        echo "✓ $1 is installed"
+        if [ ! -z "$2" ]; then
+            echo "  Version: $($1 $2 2>&1 | head -1)"
+        fi
+        return 0
+    else
+        echo "✗ $1 is NOT installed"
+        return 1
+    fi
+}
+
+# Function to check library
+check_lib() {
+    if ldconfig -p 2>/dev/null | grep -q $1; then
+        echo "✓ $1 library found"
+        return 0
+    else
+        echo "✗ $1 library NOT found"
+        return 1
+    fi
+}
+
+echo "Checking required tools:"
+echo "----------------------------------------------------------------------"
+check_command ruby --version
+check_command bundle --version
+check_command node --version
+check_command npm --version
+check_command docker --version
+check_command docker-compose --version
+echo ""
+
+echo "Checking PostgreSQL:"
+echo "----------------------------------------------------------------------"
+check_command psql --version
+check_command pg_config --version
+check_lib libpq
+echo ""
+
+echo "Checking Redis:"
+echo "----------------------------------------------------------------------"
+check_command redis-cli --version
+echo ""
+
+echo "Checking Docker containers:"
+echo "----------------------------------------------------------------------"
+if command -v docker &> /dev/null; then
+    if docker ps | grep -q bookmydoc-postgres; then
+        echo "✓ PostgreSQL container is running"
+    else
+        echo "✗ PostgreSQL container is NOT running"
+        echo "  Start with: docker run -d --name bookmydoc-postgres -e POSTGRES_USER=bookmydoc -e POSTGRES_PASSWORD=bookmydoc_dev_password -e POSTGRES_DB=bookmydoc_development -p 5432:5432 postgres:15"
+    fi
+
+    if docker ps | grep -q bookmydoc-redis; then
+        echo "✓ Redis container is running"
+    else
+        echo "✗ Redis container is NOT running"
+        echo "  Start with: docker run -d --name bookmydoc-redis -p 6379:6379 redis:7-alpine"
+    fi
+else
+    echo "⚠ Docker not available to check containers"
+fi
+echo ""
+
+echo "Checking connectivity:"
+echo "----------------------------------------------------------------------"
+# Check PostgreSQL port
+if nc -z localhost 5432 2>/dev/null; then
+    echo "✓ PostgreSQL port 5432 is accessible"
+else
+    echo "✗ PostgreSQL port 5432 is NOT accessible"
+fi
+
+# Check Redis port
+if nc -z localhost 6379 2>/dev/null; then
+    echo "✓ Redis port 6379 is accessible"
+else
+    echo "✗ Redis port 6379 is NOT accessible"
+fi
+echo ""
+
+echo "======================================================================"
+echo "Next Steps:"
+echo "======================================================================"
+echo ""
+echo "If libpq-dev is missing, install it:"
+echo "  sudo apt-get update"
+echo "  sudo apt-get install -y libpq-dev build-essential"
+echo ""
+echo "If PostgreSQL/Redis containers are not running, start them:"
+echo "  See commands above or check INSTALL_DEPENDENCIES.md"
+echo ""
+echo "Then run:"
+echo "  bundle install"
+echo "  npm install"
+echo "  rails db:create db:migrate db:seed"
+echo "  ./bin/dev"
+echo ""

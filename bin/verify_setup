@@ -1,0 +1,115 @@
+#!/usr/bin/env ruby
+
+puts "\n" + "="*60
+puts "BookMyDoc Setup Verification"
+puts "="*60 + "\n"
+
+checks = []
+
+# Check Ruby version
+print "Checking Ruby version... "
+ruby_version = RUBY_VERSION
+if ruby_version >= "3.2.0"
+  puts "✓ Ruby #{ruby_version}"
+  checks << true
+else
+  puts "✗ Ruby #{ruby_version} (Need 3.2.0+)"
+  checks << false
+end
+
+# Check PostgreSQL connection
+print "Checking PostgreSQL... "
+begin
+  require 'pg'
+  conn = PG.connect(
+    host: ENV['DATABASE_HOST'] || 'localhost',
+    port: 5432,
+    dbname: 'postgres',
+    user: ENV['DATABASE_USERNAME'] || 'bookmydoc',
+    password: ENV['DATABASE_PASSWORD'] || 'bookmydoc_dev_password'
+  )
+  conn.close
+  puts "✓ Connected"
+  checks << true
+rescue => e
+  puts "✗ Cannot connect: #{e.message}"
+  checks << false
+end
+
+# Check Redis connection
+print "Checking Redis... "
+begin
+  require 'redis'
+  redis = Redis.new(url: ENV['REDIS_URL'] || 'redis://localhost:6379/0')
+  redis.ping
+  redis.close
+  puts "✓ Connected"
+  checks << true
+rescue => e
+  puts "✗ Cannot connect: #{e.message}"
+  checks << false
+end
+
+# Check if Bundler is installed
+print "Checking Bundler... "
+if system("which bundle > /dev/null 2>&1")
+  puts "✓ Installed"
+  checks << true
+else
+  puts "✗ Not installed"
+  checks << false
+end
+
+# Check if Node is installed
+print "Checking Node.js... "
+if system("which node > /dev/null 2>&1")
+  puts "✓ Installed"
+  checks << true
+else
+  puts "✗ Not installed (optional for Tailwind)"
+  checks << false
+end
+
+# Check if .env file exists
+print "Checking .env file... "
+if File.exist?('.env')
+  puts "✓ Exists"
+  checks << true
+else
+  puts "⚠ Not found (will use defaults)"
+  checks << true  # Not critical
+end
+
+# Check if database exists
+print "Checking database... "
+begin
+  require 'pg'
+  conn = PG.connect(
+    host: ENV['DATABASE_HOST'] || 'localhost',
+    port: 5432,
+    dbname: 'bookmydoc_development',
+    user: ENV['DATABASE_USERNAME'] || 'bookmydoc',
+    password: ENV['DATABASE_PASSWORD'] || 'bookmydoc_dev_password'
+  )
+  conn.close
+  puts "✓ bookmydoc_development exists"
+  checks << true
+rescue => e
+  puts "⚠ Database not created yet (run rails db:create)"
+  checks << false
+end
+
+puts "\n" + "-"*60
+if checks.all?
+  puts "✓ All checks passed! You're ready to start."
+  puts "\nRun: ./bin/dev"
+  puts "Visit: http://localhost:7000"
+else
+  puts "⚠ Some checks failed. Please fix the issues above."
+  puts "\nQuick fixes:"
+  puts "  - Start PostgreSQL: docker run -d --name bookmydoc-postgres -e POSTGRES_USER=bookmydoc -e POSTGRES_PASSWORD=bookmydoc_dev_password -e POSTGRES_DB=bookmydoc_development -p 5432:5432 postgres:15"
+  puts "  - Start Redis: docker run -d --name bookmydoc-redis -p 6379:6379 redis:7-alpine"
+  puts "  - Install gems: bundle install"
+  puts "  - Create database: rails db:create db:migrate db:seed"
+end
+puts "="*60 + "\n"

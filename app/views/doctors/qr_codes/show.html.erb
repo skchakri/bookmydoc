@@ -1,0 +1,92 @@
+<div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+  <div class="max-w-4xl mx-auto">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-extrabold text-gray-900">Your Professional QR Code</h1>
+      <p class="mt-2 text-sm text-gray-600">
+        Share this QR code with patients to help them find and book appointments
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="bg-white rounded-2xl shadow-lg p-8">
+        <div class="flex flex-col items-center">
+          <div class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-2 text-center">QR Code</h2>
+            <p class="text-sm text-gray-600 text-center">Scan to view profile</p>
+          </div>
+
+          <div class="bg-white p-6 rounded-xl border-4 border-primary-500 shadow-xl mb-6" id="qr-code-container">
+            <%= image_tag generate_image_doctors_qr_code_path,
+                alt: "Doctor QR Code",
+                class: "w-80 h-80",
+                id: "qr-code-image" %>
+          </div>
+
+          <div class="text-center mb-6">
+            <h3 class="text-lg font-semibold text-gray-900">Dr. <%= @doctor.full_name %></h3>
+            <p class="text-sm text-primary-600 font-medium"><%= @doctor.specialization %></p>
+            <% if @doctor.medical_registration_number.present? %>
+              <p class="text-xs text-gray-500 mt-1">Reg. No: <%= @doctor.medical_registration_number %></p>
+            <% end %>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3 w-full">
+            <%= link_to download_doctors_qr_code_path,
+                class: "btn btn-primary flex items-center justify-center" do %>
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download
+            <% end %>
+
+            <button onclick="window.print()" class="btn bg-secondary-600 hover:bg-secondary-700 text-white flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+              </svg>
+              Print
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Profile Status</h2>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-600">Profile Photo</span>
+              <% if @doctor.profile_photo.attached? %>
+                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full"> Uploaded</span>
+              <% else %>
+                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Not uploaded</span>
+              <% end %>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-600">Medical Certificate</span>
+              <% if @doctor.medical_certificate.attached? %>
+                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full"> Uploaded</span>
+              <% else %>
+                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Not uploaded</span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <%= link_to doctors_dashboard_path, class: "text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center justify-center" do %>
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back to Dashboard
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style media="print">
+  @page { size: A4; margin: 2cm; }
+  body * { visibility: hidden; }
+  #qr-code-container, #qr-code-container * { visibility: visible; }
+  #qr-code-container { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+  .btn, button { display: none !important; }
+</style>

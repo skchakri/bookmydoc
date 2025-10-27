@@ -1,0 +1,47 @@
+<%# Turbo Stream response for appointment reschedule %>
+
+<turbo-stream action="replace" target="appointment_<%= @appointment.id %>">
+  <template>
+    <div id="appointment_<%= @appointment.id %>" class="border border-gray-200 rounded-lg p-4 bg-white">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <div class="h-12 w-12 bg-primary-100 rounded-full flex items-center justify-center">
+            <% if @appointment.doctor.avatar.attached? %>
+              <%= image_tag @appointment.doctor.avatar, class: "h-12 w-12 rounded-full object-cover" %>
+            <% else %>
+              <span class="text-primary-600 font-semibold"><%= @appointment.doctor.full_name[0] %></span>
+            <% end %>
+          </div>
+          <div>
+            <h3 class="font-semibold text-gray-900"><%= @appointment.doctor.full_name %></h3>
+            <p class="text-sm text-gray-600"><%= @appointment.doctor.specialization %></p>
+            <p class="text-sm text-gray-500">
+              <%= @appointment.scheduled_start.strftime('%B %d, %Y at %I:%M %p') %>
+            </p>
+            <% if @appointment.moved_by_doctor? %>
+              <p class="text-xs text-orange-600 mt-1">
+                ⚠️ Rescheduled from <%= @appointment.moved_from.strftime('%b %d, %I:%M %p') %>
+              </p>
+            <% end %>
+          </div>
+        </div>
+        <span class="badge <%= @appointment.status == 'confirmed' ? 'badge-success' : 'badge-warning' %>">
+          <%= @appointment.status.titleize %>
+        </span>
+      </div>
+    </div>
+  </template>
+</turbo-stream>
+
+<turbo-stream action="prepend" target="flash-messages">
+  <template>
+    <div class="bg-green-50 text-green-800 border border-green-200 rounded-lg p-4 mb-4 flex items-center justify-between" role="alert">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+        </svg>
+        <span>Appointment updated successfully!</span>
+      </div>
+    </div>
+  </template>
+</turbo-stream>

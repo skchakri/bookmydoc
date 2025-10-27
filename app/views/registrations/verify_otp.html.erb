@@ -1,0 +1,26 @@
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+    <div>
+      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        Verify your phone number
+      </h2>
+      <p class="mt-2 text-center text-sm text-gray-600">
+        We've sent a verification code to your phone number
+      </p>
+    </div>
+
+    <%= form_with url: verify_otp_path, method: :post, class: "mt-8 space-y-6" do |f| %>
+      <div>
+        <%= label_tag :otp_code, "Enter OTP Code", class: "label" %>
+        <%= text_field_tag :otp_code, nil, class: "input text-center text-2xl tracking-widest", placeholder: "000000", required: true, autofocus: true, maxlength: 6 %>
+        <p class="mt-2 text-sm text-gray-500">Enter the 6-digit code sent to your phone</p>
+      </div>
+
+      <div>
+        <%= button_tag type: "submit", class: "btn btn-primary w-full py-3" do %>
+          Verify & Continue
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

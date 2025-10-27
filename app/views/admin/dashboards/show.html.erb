@@ -1,0 +1,22 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+      <p class="mt-2 text-gray-600">BookMyDoc Administration</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold mb-2">Total Patients</h3>
+        <p class="text-3xl font-bold text-primary-600"><%= @total_patients %></p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold mb-2">Total Doctors</h3>
+        <p class="text-3xl font-bold text-primary-600"><%= @total_doctors %></p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold mb-2">Pending Verifications</h3>
+        <p class="text-3xl font-bold text-yellow-600"><%= @pending_verifications %></p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# Exit on error
+set -e
+
+echo "Starting BookMyDoc development server..."
+echo "Server will be available at http://localhost:7000"
+echo ""
+
+# Start Tailwind CSS watch process in background
+npm run watch &
+TAILWIND_PID=$!
+
+# Trap to ensure Tailwind process is killed on exit
+trap "kill $TAILWIND_PID 2>/dev/null" EXIT
+
+# Start Rails server
+bundle exec rails server -p 7000

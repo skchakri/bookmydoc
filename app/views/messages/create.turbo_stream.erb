@@ -1,0 +1,10 @@
+<%= turbo_stream.append "messages" do %>
+  <%= render "message", message: @message, current_user: current_user %>
+<% end %>
+
+<%= turbo_stream.replace "message-form" do %>
+  <%= form_with model: Message.new, url: messages_path(user_id: @other_user.id), data: { turbo_stream: true }, class: "flex gap-2" do |f| %>
+    <%= f.text_area :content, rows: 2, class: "flex-1 rounded-lg border-gray-300", placeholder: "Type your message...", required: true %>
+    <%= f.submit "Send", class: "px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700" %>
+  <% end %>
+<% end %>

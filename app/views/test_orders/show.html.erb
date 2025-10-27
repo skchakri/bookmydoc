@@ -1,0 +1,226 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Back Button -->
+    <div class="mb-6">
+      <%= link_to test_orders_path, class: "inline-flex items-center text-sm text-gray-600 hover:text-gray-900" do %>
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back to Test Orders
+      <% end %>
+    </div>
+
+    <!-- Header Card -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+      <div class="bg-primary-600 px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">Test Order Details</h1>
+        <p class="text-primary-100 text-sm mt-1">
+          Ordered on <%= @test_order.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+        </p>
+      </div>
+
+      <div class="p-6">
+        <!-- Doctor/Patient Info Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <!-- Doctor Info -->
+          <div class="border-l-4 border-primary-500 pl-4">
+            <h3 class="text-sm font-medium text-gray-500 mb-1">Doctor</h3>
+            <p class="text-lg font-semibold text-gray-900">Dr. <%= @test_order.doctor.full_name %></p>
+            <p class="text-sm text-gray-600"><%= @test_order.doctor.specialization %></p>
+            <% if @test_order.doctor.phone_number.present? %>
+              <p class="text-sm text-gray-600 mt-1"><%= @test_order.doctor.phone_number %></p>
+            <% end %>
+          </div>
+
+          <!-- Patient Info -->
+          <div class="border-l-4 border-blue-500 pl-4">
+            <h3 class="text-sm font-medium text-gray-500 mb-1">Patient</h3>
+            <p class="text-lg font-semibold text-gray-900"><%= @test_order.patient.full_name %></p>
+            <% if @test_order.patient.phone_number.present? %>
+              <p class="text-sm text-gray-600"><%= @test_order.patient.phone_number %></p>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Related Appointment -->
+        <% if @test_order.appointment.present? %>
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div class="flex items-start">
+              <svg class="w-5 h-5 text-blue-500 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <div class="flex-1">
+                <h4 class="text-sm font-medium text-blue-900">Related Appointment</h4>
+                <p class="text-sm text-blue-700 mt-1">
+                  <%= @test_order.appointment.scheduled_start.strftime("%B %d, %Y at %I:%M %p") %>
+                </p>
+                <%= link_to "View Appointment", appointment_path(@test_order.appointment), class: "inline-flex items-center mt-2 text-sm font-medium text-blue-700 hover:text-blue-900" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Test Description -->
+        <div class="mb-6">
+          <h3 class="text-sm font-medium text-gray-700 mb-2">Test Description</h3>
+          <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <p class="text-gray-900 whitespace-pre-wrap"><%= @test_order.description %></p>
+          </div>
+        </div>
+
+        <!-- Instructions to Patient -->
+        <% if @test_order.message_to_patient.present? %>
+          <div class="mb-6">
+            <h3 class="text-sm font-medium text-gray-700 mb-2">Instructions to Patient</h3>
+            <div class="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+              <p class="text-gray-900 whitespace-pre-wrap"><%= @test_order.message_to_patient %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Test Results Section -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold text-gray-900">Test Results</h2>
+          <% if @test_result_uploads.any? %>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+              <%= pluralize(@test_result_uploads.count, 'result') %> uploaded
+            </span>
+          <% else %>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+              No results yet
+            </span>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="p-6">
+        <% if @test_result_uploads.any? %>
+          <div class="space-y-6">
+            <% @test_result_uploads.each_with_index do |result_upload, index| %>
+              <div class="border border-gray-200 rounded-lg p-5 <%= result_upload.reviewed? ? 'bg-green-50 border-green-200' : 'bg-white' %>">
+                <!-- Result Header -->
+                <div class="flex items-start justify-between mb-4">
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Result #<%= index + 1 %></h3>
+                    <p class="text-sm text-gray-600 mt-1">
+                      Uploaded by <%= result_upload.uploaded_by_patient.full_name %>
+                      on <%= result_upload.created_at.strftime("%b %d, %Y at %I:%M %p") %>
+                    </p>
+                  </div>
+
+                  <!-- Review Status Badge -->
+                  <% if result_upload.reviewed? %>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                      </svg>
+                      Reviewed
+                    </span>
+                  <% else %>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                      <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                      </svg>
+                      Pending Review
+                    </span>
+                  <% end %>
+                </div>
+
+                <!-- File Preview/Download -->
+                <% if result_upload.file.attached? %>
+                  <div class="bg-white border border-gray-300 rounded-lg p-4 mb-4">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                        <% if result_upload.file.content_type.start_with?('image/') %>
+                          <svg class="w-8 h-8 text-blue-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                          </svg>
+                        <% else %>
+                          <svg class="w-8 h-8 text-red-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path>
+                          </svg>
+                        <% end %>
+                        <div>
+                          <p class="text-sm font-medium text-gray-900"><%= result_upload.file.filename %></p>
+                          <p class="text-xs text-gray-500"><%= number_to_human_size(result_upload.file.byte_size) %></p>
+                        </div>
+                      </div>
+                      <%= link_to "Download", rails_blob_path(result_upload.file, disposition: "attachment"),
+                          class: "inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500" %>
+                    </div>
+
+                    <!-- Image Preview for images -->
+                    <% if result_upload.file.content_type.start_with?('image/') %>
+                      <div class="mt-4">
+                        <%= image_tag result_upload.file, class: "max-w-full h-auto rounded-lg border border-gray-200" %>
+                      </div>
+                    <% end %>
+                  </div>
+                <% end %>
+
+                <!-- Doctor Comments (if reviewed) -->
+                <% if result_upload.reviewed? %>
+                  <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div class="flex items-start">
+                      <svg class="w-5 h-5 text-green-600 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                      </svg>
+                      <div class="flex-1">
+                        <h4 class="text-sm font-medium text-green-900">Doctor's Comments</h4>
+                        <p class="text-sm text-green-800 mt-1">
+                          Reviewed by Dr. <%= result_upload.reviewed_by_doctor.full_name %>
+                        </p>
+                        <% if result_upload.doctor_comments.present? %>
+                          <p class="text-sm text-gray-900 mt-2 whitespace-pre-wrap"><%= result_upload.doctor_comments %></p>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                <% elsif current_doctor? %>
+                  <!-- Review Form for Doctors -->
+                  <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <h4 class="text-sm font-medium text-gray-900 mb-3">Add Review Comments</h4>
+                    <%= form_with url: "#", method: :patch, class: "space-y-3" do |f| %>
+                      <%= f.text_area :doctor_comments,
+                          rows: 3,
+                          placeholder: "Enter your review comments...",
+                          class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm" %>
+                      <%= f.submit "Submit Review",
+                          class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500" %>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <!-- Empty State -->
+          <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">No test results uploaded yet</h3>
+            <p class="mt-1 text-sm text-gray-500">
+              <% if current_patient? %>
+                Upload your test results when they're ready.
+              <% else %>
+                The patient hasn't uploaded any test results yet.
+              <% end %>
+            </p>
+            <% if current_patient? %>
+              <div class="mt-6">
+                <%= button_tag "Upload Results",
+                    type: "button",
+                    class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500" %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

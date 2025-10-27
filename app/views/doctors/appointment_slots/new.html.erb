@@ -1,0 +1,158 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Back Button -->
+    <div class="mb-6">
+      <%= link_to doctors_appointment_slots_path, class: "inline-flex items-center text-sm text-gray-600 hover:text-gray-900" do %>
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back to Availability Schedule
+      <% end %>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="bg-primary-600 px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">Create Availability Slot</h1>
+        <p class="text-primary-100 text-sm mt-1">Set up your availability for patient appointments</p>
+      </div>
+
+      <div class="p-6">
+        <%= form_with model: @appointment_slot, url: doctors_appointment_slots_path, local: true, class: "space-y-6" do |f| %>
+          <!-- Error Messages -->
+          <% if @appointment_slot.errors.any? %>
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-red-800">
+                    <%= pluralize(@appointment_slot.errors.count, "error") %> prohibited this availability slot from being saved:
+                  </h3>
+                  <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                    <% @appointment_slot.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- Start Time -->
+          <div>
+            <%= f.label :start_time, "Start Date & Time", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.datetime_local_field :start_time,
+                class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm",
+                required: true %>
+            <p class="mt-1 text-xs text-gray-500">When does this availability slot begin?</p>
+          </div>
+
+          <!-- End Time -->
+          <div>
+            <%= f.label :end_time, "End Date & Time", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.datetime_local_field :end_time,
+                class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm",
+                required: true %>
+            <p class="mt-1 text-xs text-gray-500">When does this availability slot end?</p>
+          </div>
+
+          <!-- Frequency -->
+          <div>
+            <%= f.label :frequency_minutes, "Appointment Duration (minutes)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.select :frequency_minutes,
+                options_for_select([
+                  ['15 minutes', 15],
+                  ['30 minutes', 30],
+                  ['45 minutes', 45],
+                  ['60 minutes', 60],
+                  ['90 minutes', 90],
+                  ['120 minutes', 120]
+                ], @appointment_slot.frequency_minutes || 30),
+                {},
+                class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm" %>
+            <p class="mt-1 text-xs text-gray-500">
+              This slot will be divided into appointment windows of this duration. For example, a 2-hour slot with 30-minute frequency creates 4 appointment windows.
+            </p>
+          </div>
+
+          <!-- Status -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Availability Status</label>
+            <div class="flex items-start">
+              <div class="flex items-center h-5">
+                <%= f.check_box :is_open,
+                    class: "h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500",
+                    checked: @appointment_slot.is_open.nil? ? true : @appointment_slot.is_open %>
+              </div>
+              <div class="ml-3">
+                <%= f.label :is_open, class: "text-sm text-gray-700" do %>
+                  <span class="font-medium">Open for bookings</span>
+                  <p class="text-xs text-gray-500 mt-1">Uncheck this to temporarily close this slot without deleting it</p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Help Text -->
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+              <div class="ml-3 flex-1">
+                <h3 class="text-sm font-medium text-blue-800">Creating Availability Slots</h3>
+                <div class="mt-2 text-sm text-blue-700">
+                  <ul class="list-disc pl-5 space-y-1">
+                    <li>Set your available dates and times when patients can book appointments</li>
+                    <li>Each slot is automatically divided into smaller appointment windows based on the duration you set</li>
+                    <li>You can create multiple slots for different days or times</li>
+                    <li>Patients will see all available time windows when booking</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+            <%= link_to "Cancel", doctors_appointment_slots_path,
+                class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500" %>
+            <%= f.submit "Create Availability Slot",
+                class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Preview Section (Optional) -->
+    <div class="mt-6 bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Examples</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="border border-gray-200 rounded-lg p-4">
+          <h4 class="font-medium text-gray-900 mb-2">Morning Clinic</h4>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>Start: Today 9:00 AM</li>
+            <li>End: Today 12:00 PM</li>
+            <li>Duration: 30 minutes</li>
+            <li>Result: 6 appointment slots</li>
+          </ul>
+        </div>
+        <div class="border border-gray-200 rounded-lg p-4">
+          <h4 class="font-medium text-gray-900 mb-2">Evening Clinic</h4>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>Start: Today 5:00 PM</li>
+            <li>End: Today 8:00 PM</li>
+            <li>Duration: 45 minutes</li>
+            <li>Result: 4 appointment slots</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

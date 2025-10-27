@@ -1,0 +1,24 @@
+{
+  "name": "book_my_doc",
+  "version": "1.0.0",
+  "description": "BookMyDoc - Healthcare Appointment Platform for India",
+  "scripts": {
+    "build": "tailwindcss -c ./config/tailwind.config.js -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
+    "watch": "tailwindcss -c ./config/tailwind.config.js -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --watch"
+  },
+  "keywords": [
+    "healthcare",
+    "appointments",
+    "rails",
+    "hotwire"
+  ],
+  "author": "BookMyDoc",
+  "license": "MIT",
+  "devDependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10",
+    "flowbite": "^2.2.1",
+    "tailwindcss": "^3.4.0"
+  }
+}
