@@ -1,12 +1,351 @@
 <div class="min-h-screen bg-gray-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Welcome Header -->
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900">Welcome, Dr. <%= current_user.full_name %></h1>
-      <p class="mt-2 text-gray-600">Doctor Dashboard</p>
+      <p class="mt-2 text-gray-600">Manage your professional profile and appointments</p>
     </div>
-    <div class="bg-white rounded-lg shadow p-6">
-      <h2 class="text-xl font-semibold mb-4">Dashboard Overview</h2>
-      <p>Your doctor dashboard is loading...</p>
+
+    <!-- Professional Profile Card -->
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
+      <div class="md:flex">
+        <!-- Left: Profile Photo -->
+        <div class="md:w-1/3 bg-gradient-to-br from-primary-500 to-primary-700 p-8 flex items-center justify-center">
+          <div class="text-center">
+            <% if current_user.avatar.attached? %>
+              <%= image_tag current_user.avatar, class: "w-48 h-48 rounded-full object-cover mx-auto border-4 border-white shadow-xl" %>
+            <% elsif current_user.profile_photo.attached? %>
+              <%= image_tag current_user.profile_photo, class: "w-48 h-48 rounded-full object-cover mx-auto border-4 border-white shadow-xl" %>
+            <% else %>
+              <!-- Avatar with Initials -->
+              <%
+                initials = current_user.full_name.split.map(&:first).take(2).join.upcase
+                # Generate a color based on the user's name for consistency
+                color_hues = ['from-blue-400 to-blue-600', 'from-green-400 to-green-600', 'from-purple-400 to-purple-600', 'from-pink-400 to-pink-600', 'from-indigo-400 to-indigo-600', 'from-red-400 to-red-600', 'from-yellow-400 to-yellow-600', 'from-teal-400 to-teal-600']
+                color_index = current_user.full_name.sum % color_hues.length
+                gradient_color = color_hues[color_index]
+              %>
+              <div class="w-48 h-48 rounded-full bg-gradient-to-br <%= gradient_color %> flex items-center justify-center mx-auto border-4 border-white shadow-xl">
+                <span class="text-6xl font-bold text-white"><%= initials %></span>
+              </div>
+            <% end %>
+            <p class="mt-4 text-white text-sm font-medium">Profile Photo</p>
+          </div>
+        </div>
+
+        <!-- Right: Profile Information -->
+        <div class="md:w-2/3 p-8">
+          <!-- Name and Specialization -->
+          <div class="mb-6">
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="text-2xl font-bold text-gray-900"><%= current_user.full_name %></h2>
+              <% if current_user.is_verified? %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Verified
+                </span>
+              <% end %>
+            </div>
+            <p class="text-lg text-primary-600 font-semibold"><%= current_user.specialization %></p>
+            <p class="text-gray-600 mt-1"><%= current_user.email %></p>
+            <p class="text-gray-600"><%= current_user.phone_number %></p>
+          </div>
+
+          <!-- Rating and Stats -->
+          <div class="flex items-center space-x-6 mb-6 pb-6 border-b border-gray-200">
+            <div class="flex items-center">
+              <svg class="w-5 h-5 text-yellow-400 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              <span class="text-lg font-bold text-gray-900"><%= current_user.rating || 0.0 %></span>
+              <span class="text-sm text-gray-500 ml-1">/ 5.0</span>
+            </div>
+            <div class="text-center">
+              <p class="text-2xl font-bold text-gray-900"><%= current_user.years_of_experience || 0 %></p>
+              <p class="text-xs text-gray-500">Years Exp.</p>
+            </div>
+            <div class="text-center">
+              <p class="text-2xl font-bold text-gray-900"><%= current_user.testimonials_count || 0 %></p>
+              <p class="text-xs text-gray-500">Reviews</p>
+            </div>
+          </div>
+
+          <!-- QR Code Actions -->
+          <div class="flex flex-wrap gap-4">
+            <%= link_to doctors_qr_code_path, class: "inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition" do %>
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+              </svg>
+              View QR Code
+            <% end %>
+
+            <%= link_to download_doctors_qr_code_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition" do %>
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download QR Code
+            <% end %>
+
+            <%= link_to edit_doctors_profile_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition" do %>
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Edit Profile
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <!-- Today's Appointments -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Today's Appointments</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">0</p>
+          </div>
+          <div class="p-3 bg-blue-100 rounded-lg">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- This Month's Earnings -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">This Month's Earnings</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">₹0</p>
+          </div>
+          <div class="p-3 bg-green-100 rounded-lg">
+            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending Reviews -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Pending Reviews</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">0</p>
+          </div>
+          <div class="p-3 bg-yellow-100 rounded-lg">
+            <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unread Messages -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Unread Messages</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">0</p>
+          </div>
+          <div class="p-3 bg-purple-100 rounded-lg">
+            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabbed Content: Bio, Certificates, Awards, Reviews -->
+    <div class="bg-white rounded-lg shadow mb-8">
+      <div class="border-b border-gray-200">
+        <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+          <button onclick="switchTab('bio')" id="tab-bio" class="tab-button border-primary-500 text-primary-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+            Biography
+          </button>
+          <button onclick="switchTab('certificates')" id="tab-certificates" class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+            Certificates
+          </button>
+          <button onclick="switchTab('awards')" id="tab-awards" class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+            Awards & Recognition
+          </button>
+          <button onclick="switchTab('reviews')" id="tab-reviews" class="tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+            Patient Reviews
+          </button>
+        </nav>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="p-6">
+        <!-- Biography Tab -->
+        <div id="content-bio" class="tab-content">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Professional Biography</h3>
+          <% if current_user.bio.present? %>
+            <div class="prose max-w-none text-gray-700">
+              <%= simple_format(current_user.bio) %>
+            </div>
+          <% else %>
+            <div class="text-center py-12 bg-gray-50 rounded-lg">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <p class="mt-4 text-gray-600">No biography added yet</p>
+              <%= link_to "Add Biography", "#", class: "mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700" %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Certificates Tab -->
+        <div id="content-certificates" class="tab-content hidden">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Certifications & Education</h3>
+          <% if current_user.read_attribute(:certificates).present? %>
+            <% begin %>
+              <% certificates = JSON.parse(current_user.read_attribute(:certificates)) %>
+              <div class="space-y-4">
+                <% certificates.each do |cert| %>
+                  <div class="border border-gray-200 rounded-lg p-4 hover:border-primary-500 transition">
+                    <div class="flex items-start">
+                      <div class="flex-shrink-0">
+                        <div class="p-3 bg-primary-100 rounded-lg">
+                          <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="ml-4 flex-1">
+                        <h4 class="text-base font-semibold text-gray-900"><%= cert['name'] %></h4>
+                        <p class="text-sm text-gray-600 mt-1"><%= cert['institution'] %></p>
+                        <p class="text-sm text-gray-500 mt-1">Year: <%= cert['year'] %></p>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% rescue JSON::ParserError %>
+              <p class="text-gray-600">Unable to load certificates</p>
+            <% end %>
+          <% else %>
+            <div class="text-center py-12 bg-gray-50 rounded-lg">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+              </svg>
+              <p class="mt-4 text-gray-600">No certificates added yet</p>
+              <%= link_to "Add Certificates", "#", class: "mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700" %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Awards Tab -->
+        <div id="content-awards" class="tab-content hidden">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Awards & Recognition</h3>
+          <% if current_user.read_attribute(:awards).present? %>
+            <% begin %>
+              <% awards = JSON.parse(current_user.read_attribute(:awards)) %>
+              <div class="space-y-4">
+                <% awards.each do |award| %>
+                  <div class="border border-gray-200 rounded-lg p-4 hover:border-yellow-500 transition">
+                    <div class="flex items-start">
+                      <div class="flex-shrink-0">
+                        <div class="p-3 bg-yellow-100 rounded-lg">
+                          <svg class="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="ml-4 flex-1">
+                        <h4 class="text-base font-semibold text-gray-900"><%= award['name'] %></h4>
+                        <p class="text-sm text-gray-600 mt-1"><%= award['organization'] %></p>
+                        <p class="text-sm text-gray-500 mt-1">Year: <%= award['year'] %></p>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% rescue JSON::ParserError %>
+              <p class="text-gray-600">Unable to load awards</p>
+            <% end %>
+          <% else %>
+            <div class="text-center py-12 bg-gray-50 rounded-lg">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              <p class="mt-4 text-gray-600">No awards added yet</p>
+              <%= link_to "Add Awards", "#", class: "mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700" %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Reviews Tab -->
+        <div id="content-reviews" class="tab-content hidden">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Patient Reviews</h3>
+          <div class="text-center py-12 bg-gray-50 rounded-lg">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+            </svg>
+            <p class="mt-4 text-gray-600">No patient reviews yet</p>
+            <p class="mt-2 text-sm text-gray-500">Reviews will appear here after patients complete appointments</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Today's Appointments -->
+    <div class="bg-white rounded-lg shadow mb-8">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-900">Today's Appointments</h2>
+      </div>
+      <div class="p-6">
+        <div class="text-center py-12 bg-gray-50 rounded-lg">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <p class="mt-4 text-gray-600">No appointments scheduled for today</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming Appointments -->
+    <div class="bg-white rounded-lg shadow">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-900">Upcoming Appointments</h2>
+      </div>
+      <div class="p-6">
+        <div class="text-center py-12 bg-gray-50 rounded-lg">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <p class="mt-4 text-gray-600">No upcoming appointments</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<script>
+  function switchTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(content => {
+      content.classList.add('hidden');
+    });
+
+    // Remove active styling from all tabs
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.classList.remove('border-primary-500', 'text-primary-600');
+      button.classList.add('border-transparent', 'text-gray-500');
+    });
+
+    // Show selected tab content
+    document.getElementById('content-' + tabName).classList.remove('hidden');
+
+    // Add active styling to selected tab
+    const activeTab = document.getElementById('tab-' + tabName);
+    activeTab.classList.add('border-primary-500', 'text-primary-600');
+    activeTab.classList.remove('border-transparent', 'text-gray-500');
+  }
+</script>

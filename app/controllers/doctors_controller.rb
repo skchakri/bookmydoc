@@ -25,7 +25,7 @@ class DoctorsController < ApplicationController
   end
 
   def show
-    @doctor = User.verified_doctors.find(params[:id])
+    @doctor = User.verified_doctors.find_by!(slug: params[:slug])
 
     @distance = if current_patient? && current_user.latitude && current_user.longitude
       current_user.distance_to(@doctor)

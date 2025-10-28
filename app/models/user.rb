@@ -26,6 +26,9 @@ class User < ApplicationRecord
   has_many :reviews_as_doctor, class_name: 'Review', foreign_key: :doctor_id, dependent: :destroy
   has_many :reviews_as_patient, class_name: 'Review', foreign_key: :patient_id, dependent: :destroy
 
+  # Callbacks
+  before_validation :generate_slug, if: -> { slug.blank? && doctor? }
+
   # Validations
   validates :full_name, presence: true
   validates :phone_number, presence: true, uniqueness: true, format: { with: /\A\+?[0-9]{10,15}\z/, message: "must be a valid phone number" }
@@ -34,6 +37,7 @@ class User < ApplicationRecord
   validates :specialization, presence: true, if: :doctor?
   validates :consultation_fee_initial, numericality: { greater_than_or_equal_to: 0 }, if: :doctor?
   validates :consultation_fee_due, numericality: { greater_than_or_equal_to: 0 }, if: :doctor?
+  validates :slug, uniqueness: true, allow_nil: true
 
   # Scopes
   scope :verified_doctors, -> { where(role: :doctor, is_verified: true) }
@@ -111,5 +115,27 @@ class User < ApplicationRecord
 
   def has_reviewed?(doctor)
     reviews_as_patient.exists?(doctor: doctor)
+  end
+
+  def to_param
+    slug.presence || id.to_s
+  end
+
+  private
+
+  def generate_slug
+    return unless doctor? && full_name.present?
+
+    base_slug = full_name.parameterize
+    candidate_slug = base_slug
+    counter = 1
+
+    # Ensure uniqueness by appending a number if needed
+    while User.where(slug: candidate_slug).where.not(id: id).exists?
+      candidate_slug = "#{base_slug}-#{counter}"
+      counter += 1
+    end
+
+    self.slug = candidate_slug
   end
 end

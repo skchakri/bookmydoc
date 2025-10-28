@@ -1,0 +1,221 @@
+<div class="min-h-screen bg-gradient-to-br from-primary-50 via-white to-blue-50 py-8">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header Section -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-600 rounded-full mb-4">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+        </svg>
+      </div>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Report Your Symptoms</h1>
+      <p class="text-lg text-gray-600">Our AI will analyze your symptoms and recommend the right specialist for you</p>
+    </div>
+
+    <!-- Main Form Card -->
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+      <%= form_with model: @symptom_report, url: symptom_reports_path, local: true, class: "p-8" do |f| %>
+        <!-- Error Messages -->
+        <% if @symptom_report.errors.any? %>
+          <div class="mb-6 bg-red-50 border-l-4 border-red-500 rounded-r-lg p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  <%= pluralize(@symptom_report.errors.count, "error") %> prohibited this symptom report from being saved:
+                </h3>
+                <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                  <% @symptom_report.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Instructions -->
+        <div class="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div class="ml-3 flex-1">
+              <h3 class="text-sm font-medium text-blue-800">How to describe your symptoms</h3>
+              <div class="mt-2 text-sm text-blue-700">
+                <p>Please provide detailed information about:</p>
+                <ul class="list-disc pl-5 mt-2 space-y-1">
+                  <li>What symptoms you're experiencing</li>
+                  <li>When they started (duration)</li>
+                  <li>How severe they are (mild, moderate, severe)</li>
+                  <li>Any factors that make them better or worse</li>
+                  <li>Any other relevant medical history</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Symptom Description Field -->
+        <div class="mb-6">
+          <%= f.label :free_text_description, "Describe Your Symptoms", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_area :free_text_description,
+              rows: 8,
+              placeholder: "Example: I've been experiencing a severe headache for the past 3 days. The pain is mostly on the right side of my head and gets worse with bright lights. I also feel slightly nauseous and have difficulty concentrating...",
+              class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm transition-colors",
+              required: true %>
+          <p class="mt-2 text-sm text-gray-500">
+            <span id="char-count">0</span> characters (recommended: at least 50 characters for better AI analysis)
+          </p>
+        </div>
+
+        <!-- Additional Information Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <!-- Duration Field -->
+          <div>
+            <%= f.label :symptom_duration, "How long have you been experiencing these symptoms?", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.select :symptom_duration,
+                [
+                  ['Less than 24 hours', 'less_than_24_hours'],
+                  ['1-3 days', '1_to_3_days'],
+                  ['4-7 days', '4_to_7_days'],
+                  ['1-2 weeks', '1_to_2_weeks'],
+                  ['2-4 weeks', '2_to_4_weeks'],
+                  ['More than a month', 'more_than_month'],
+                  ['Recurring/Chronic', 'recurring']
+                ],
+                { include_blank: 'Select duration' },
+                class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm" %>
+          </div>
+
+          <!-- Referral Field -->
+          <div>
+            <%= f.label :referred_by, "Were you referred by anyone?", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.text_field :referred_by,
+                placeholder: "Doctor's name or 'Self' if not referred",
+                class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm" %>
+          </div>
+        </div>
+
+        <!-- Medications Field -->
+        <div class="mb-6">
+          <%= f.label :medications_taken, "Have you taken any medications for these symptoms?", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_area :medications_taken,
+              rows: 3,
+              placeholder: "List any medications, supplements, or home remedies you've tried (e.g., 'Paracetamol 500mg twice daily, vitamin C supplements'). Enter 'None' if you haven't taken anything.",
+              class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm" %>
+        </div>
+
+        <!-- Previous Tests Field -->
+        <div class="mb-6">
+          <%= f.label :previous_tests, "Have you undergone any medical tests for these symptoms?", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_area :previous_tests,
+              rows: 3,
+              placeholder: "List any tests, scans, or examinations you've had (e.g., 'Blood test done last week - hemoglobin was low', 'X-ray of chest - normal'). Enter 'None' if you haven't had any tests.",
+              class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm" %>
+        </div>
+
+        <!-- Example Symptoms (Collapsible) -->
+        <details class="mb-6 bg-gray-50 rounded-lg border border-gray-200">
+          <summary class="px-4 py-3 cursor-pointer text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+            <span class="inline-flex items-center">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              View Example Symptoms
+            </span>
+          </summary>
+          <div class="px-4 pb-4 text-sm text-gray-600 space-y-3">
+            <div class="border-l-4 border-blue-500 pl-3">
+              <strong class="text-gray-900">Headache Example:</strong>
+              <p class="mt-1">"I have been experiencing persistent headaches for the last 5 days. The pain is throbbing and located on both sides of my head. It gets worse in the evening and improves after taking rest."</p>
+            </div>
+            <div class="border-l-4 border-green-500 pl-3">
+              <strong class="text-gray-900">Fever Example:</strong>
+              <p class="mt-1">"I've had a high fever (102°F) for 2 days along with body aches and chills. I also have a sore throat and slight cough. No appetite and feeling very tired."</p>
+            </div>
+            <div class="border-l-4 border-purple-500 pl-3">
+              <strong class="text-gray-900">Digestive Issues Example:</strong>
+              <p class="mt-1">"For the past week, I've been experiencing stomach pain and bloating after meals. Sometimes accompanied by nausea. The pain is sharp and located in the upper abdomen."</p>
+            </div>
+          </div>
+        </details>
+
+        <!-- Privacy Notice -->
+        <div class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-green-700">
+                <strong class="font-medium">Your privacy is protected.</strong> Your symptom information is confidential and will only be used to recommend appropriate specialists. It will be visible to you and doctors you book appointments with.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
+          <%= link_to "Cancel", root_path, class: "inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors" %>
+
+          <%= f.submit "Analyze Symptoms & Get Recommendations", class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-lg hover:shadow-xl transition-all" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">How Our AI Analysis Works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="text-center">
+          <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-3">
+            <span class="text-2xl font-bold text-blue-600">1</span>
+          </div>
+          <h3 class="text-sm font-medium text-gray-900 mb-1">AI Analysis</h3>
+          <p class="text-xs text-gray-600">Our AI analyzes your symptoms using medical knowledge databases</p>
+        </div>
+        <div class="text-center">
+          <div class="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-3">
+            <span class="text-2xl font-bold text-green-600">2</span>
+          </div>
+          <h3 class="text-sm font-medium text-gray-900 mb-1">Specialist Match</h3>
+          <p class="text-xs text-gray-600">We recommend the most appropriate medical specialists for your condition</p>
+        </div>
+        <div class="text-center">
+          <div class="inline-flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-3">
+            <span class="text-2xl font-bold text-purple-600">3</span>
+          </div>
+          <h3 class="text-sm font-medium text-gray-900 mb-1">Book Instantly</h3>
+          <p class="text-xs text-gray-600">Choose from verified doctors near you and book an appointment</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="mt-6 text-center text-sm text-gray-500">
+      <p><strong>Important:</strong> This AI analysis is for informational purposes only and does not replace professional medical advice. Always consult with a qualified healthcare provider for proper diagnosis and treatment.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Character counter
+  document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.querySelector('textarea[name="symptom_report[free_text_description]"]');
+    const charCount = document.getElementById('char-count');
+
+    if (textarea && charCount) {
+      textarea.addEventListener('input', function() {
+        charCount.textContent = this.value.length;
+      });
+    }
+  });
+</script>

@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   # Doctor namespace
   namespace :doctors do
     resource :dashboard, only: [:show]
+    resource :profile, only: [:edit, :update]
     resources :appointment_slots
     resource :qr_code, only: [:show] do
       get :download
@@ -41,7 +42,7 @@ Rails.application.routes.draw do
   end
 
   # Public resources
-  resources :doctors, only: [:index, :show] do
+  resources :doctors, only: [:index, :show], param: :slug do
     resources :reviews, only: [:create]
   end
   resources :symptom_reports, only: [:new, :create, :show]

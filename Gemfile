@@ -40,6 +40,9 @@ gem "kaminari"
 # Rate limiting
 gem "rack-attack"
 
+# AI/LLM integration
+gem "ruby_llm", "~> 1.8"
+
 # Web server
 gem "puma", "~> 6.0"
 

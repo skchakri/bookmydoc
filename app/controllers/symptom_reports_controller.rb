@@ -40,6 +40,12 @@ class SymptomReportsController < ApplicationController
   private
 
   def symptom_report_params
-    params.require(:symptom_report).permit(:free_text_description)
+    params.require(:symptom_report).permit(
+      :free_text_description,
+      :symptom_duration,
+      :medications_taken,
+      :previous_tests,
+      :referred_by
+    )
   end
 end

@@ -6,6 +6,7 @@ module Doctors
 
     def show
       # Display the QR code page (for viewing and printing)
+      @doctor = current_user
     end
 
     def download

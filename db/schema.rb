@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_10_26_180347) do
+ActiveRecord::Schema[7.1].define(version: 2025_10_28_060217) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -148,6 +148,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_26_180347) do
     t.jsonb "ai_recommended_specializations", default: []
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "ai_symptom_details"
+    t.text "ai_basic_care_recommendations"
+    t.string "ai_urgency_level"
+    t.string "symptom_duration"
+    t.text "medications_taken"
+    t.text "previous_tests"
+    t.string "referred_by"
     t.index ["created_at"], name: "index_symptom_reports_on_created_at"
     t.index ["patient_id"], name: "index_symptom_reports_on_patient_id"
   end
@@ -217,10 +224,17 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_26_180347) do
     t.datetime "updated_at", null: false
     t.text "address"
     t.integer "years_of_experience"
+    t.text "certificates"
+    t.text "awards"
+    t.text "bio"
+    t.decimal "rating", precision: 3, scale: 2, default: "0.0"
+    t.integer "testimonials_count", default: 0
+    t.string "slug"
     t.index ["email"], name: "index_users_on_email"
     t.index ["latitude", "longitude"], name: "index_users_on_latitude_and_longitude"
     t.index ["phone_number"], name: "index_users_on_phone_number", unique: true
     t.index ["role"], name: "index_users_on_role"
+    t.index ["slug"], name: "index_users_on_slug", unique: true
     t.index ["specialization"], name: "index_users_on_specialization"
   end
 

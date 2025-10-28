@@ -1,0 +1,267 @@
+<div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+  <div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-extrabold text-gray-900">Edit Profile</h1>
+      <p class="mt-2 text-sm text-gray-600">Update your professional information and credentials</p>
+    </div>
+
+    <%= form_with model: @doctor, url: doctors_profile_path, method: :patch, local: true, class: "space-y-8" do |f| %>
+      <!-- Basic Information -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">Basic Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <%= f.label :full_name, "Full Name", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.text_field :full_name, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" %>
+          </div>
+
+          <div>
+            <%= f.label :email, "Email Address", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.email_field :email, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" %>
+          </div>
+
+          <div>
+            <%= f.label :phone_number, "Phone Number", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.text_field :phone_number, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" %>
+          </div>
+
+          <div>
+            <%= f.label :location_city, "City", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.text_field :location_city, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" %>
+          </div>
+
+          <div class="md:col-span-2">
+            <%= f.label :address, "Address", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.text_area :address, rows: 2, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" %>
+          </div>
+
+          <div>
+            <%= f.label :location_pin_code, "PIN Code", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.text_field :location_pin_code, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Professional Information -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">Professional Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <%= f.label :specialization, "Specialization", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.text_field :specialization, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" %>
+          </div>
+
+          <div>
+            <%= f.label :years_of_experience, "Years of Experience", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.number_field :years_of_experience, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" %>
+          </div>
+
+          <div>
+            <%= f.label :medical_registration_number, "Medical Registration Number", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.text_field :medical_registration_number, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" %>
+          </div>
+
+          <div>
+            <%= f.label :consultation_fee_initial, "Initial Consultation Fee (₹)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.number_field :consultation_fee_initial, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" %>
+          </div>
+
+          <div>
+            <%= f.label :consultation_fee_due, "Follow-up Consultation Fee (₹)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.number_field :consultation_fee_due, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Biography -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">Biography</h2>
+        <%= f.label :bio, "Professional Biography", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= f.text_area :bio, rows: 6, placeholder: "Write about your education, experience, specializations, and approach to patient care...", class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" %>
+        <p class="mt-2 text-sm text-gray-500">This will be displayed on your public profile</p>
+      </div>
+
+      <!-- Certificates -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-semibold text-gray-900">Certificates & Education</h2>
+          <button type="button" onclick="addCertificate()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Add Certificate
+          </button>
+        </div>
+
+        <div id="certificates-container" class="space-y-4">
+          <% if @doctor.read_attribute(:certificates).present? %>
+            <% begin %>
+              <% certificates = JSON.parse(@doctor.read_attribute(:certificates)) %>
+              <% certificates.each_with_index do |cert, index| %>
+                <div class="certificate-item border border-gray-200 rounded-lg p-4">
+                  <div class="flex items-start justify-between mb-4">
+                    <h3 class="text-sm font-semibold text-gray-900">Certificate #<%= index + 1 %></h3>
+                    <button type="button" onclick="removeCertificate(this)" class="text-red-600 hover:text-red-700">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input type="text" name="certificates[][name]" value="<%= cert['name'] %>" placeholder="Certificate Name" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
+                    <input type="text" name="certificates[][institution]" value="<%= cert['institution'] %>" placeholder="Institution" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
+                    <input type="text" name="certificates[][year]" value="<%= cert['year'] %>" placeholder="Year" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
+                  </div>
+                </div>
+              <% end %>
+            <% rescue JSON::ParserError %>
+            <% end %>
+          <% end %>
+        </div>
+
+        <p class="mt-4 text-sm text-gray-500">Add your medical degrees, certifications, and educational qualifications</p>
+      </div>
+
+      <!-- Awards -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-semibold text-gray-900">Awards & Recognition</h2>
+          <button type="button" onclick="addAward()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Add Award
+          </button>
+        </div>
+
+        <div id="awards-container" class="space-y-4">
+          <% if @doctor.read_attribute(:awards).present? %>
+            <% begin %>
+              <% awards = JSON.parse(@doctor.read_attribute(:awards)) %>
+              <% awards.each_with_index do |award, index| %>
+                <div class="award-item border border-gray-200 rounded-lg p-4">
+                  <div class="flex items-start justify-between mb-4">
+                    <h3 class="text-sm font-semibold text-gray-900">Award #<%= index + 1 %></h3>
+                    <button type="button" onclick="removeAward(this)" class="text-red-600 hover:text-red-700">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input type="text" name="awards[][title]" value="<%= award['title'] %>" placeholder="Award Title" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
+                    <input type="text" name="awards[][organization]" value="<%= award['organization'] %>" placeholder="Organization" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
+                    <input type="text" name="awards[][year]" value="<%= award['year'] %>" placeholder="Year" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
+                  </div>
+                </div>
+              <% end %>
+            <% rescue JSON::ParserError %>
+            <% end %>
+          <% end %>
+        </div>
+
+        <p class="mt-4 text-sm text-gray-500">Add awards, recognitions, and honors you've received</p>
+      </div>
+
+      <!-- Clinic Information -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">Clinic Information</h2>
+        <div class="grid grid-cols-1 gap-6">
+          <div>
+            <%= f.label :clinic_address, "Clinic Address", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.text_area :clinic_address, rows: 3, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Photos -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">Photos & Documents</h2>
+        <div class="space-y-6">
+          <div>
+            <%= f.label :avatar, "Profile Photo", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.file_field :avatar, accept: "image/*", class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" %>
+            <% if @doctor.avatar.attached? %>
+              <p class="mt-2 text-sm text-green-600">Current photo uploaded</p>
+            <% end %>
+          </div>
+
+          <div>
+            <%= f.label :medical_certificate, "Medical Certificate", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.file_field :medical_certificate, accept: "application/pdf,image/*", class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" %>
+            <% if @doctor.medical_certificate.attached? %>
+              <p class="mt-2 text-sm text-green-600">Certificate uploaded</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end space-x-4">
+        <%= link_to "Cancel", doctors_dashboard_path, class: "px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+        <%= f.submit "Save Changes", class: "px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+function addCertificate() {
+  const container = document.getElementById('certificates-container');
+  const count = container.querySelectorAll('.certificate-item').length + 1;
+  
+  const html = `
+    <div class="certificate-item border border-gray-200 rounded-lg p-4">
+      <div class="flex items-start justify-between mb-4">
+        <h3 class="text-sm font-semibold text-gray-900">Certificate #${count}</h3>
+        <button type="button" onclick="removeCertificate(this)" class="text-red-600 hover:text-red-700">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <input type="text" name="certificates[][name]" placeholder="Certificate Name" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
+        <input type="text" name="certificates[][institution]" placeholder="Institution" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
+        <input type="text" name="certificates[][year]" placeholder="Year" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
+      </div>
+    </div>
+  `;
+  
+  container.insertAdjacentHTML('beforeend', html);
+}
+
+function removeCertificate(button) {
+  button.closest('.certificate-item').remove();
+}
+
+function addAward() {
+  const container = document.getElementById('awards-container');
+  const count = container.querySelectorAll('.award-item').length + 1;
+  
+  const html = `
+    <div class="award-item border border-gray-200 rounded-lg p-4">
+      <div class="flex items-start justify-between mb-4">
+        <h3 class="text-sm font-semibold text-gray-900">Award #${count}</h3>
+        <button type="button" onclick="removeAward(this)" class="text-red-600 hover:text-red-700">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <input type="text" name="awards[][title]" placeholder="Award Title" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
+        <input type="text" name="awards[][organization]" placeholder="Organization" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
+        <input type="text" name="awards[][year]" placeholder="Year" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500" />
+      </div>
+    </div>
+  `;
+  
+  container.insertAdjacentHTML('beforeend', html);
+}
+
+function removeAward(button) {
+  button.closest('.award-item').remove();
+}
+</script>
