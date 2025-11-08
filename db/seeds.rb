@@ -177,6 +177,146 @@ patient3 = User.create!(
 puts "✓ Patient 3 created: #{patient3.full_name}"
 puts "  Phone: #{patient3.phone_number} / password: patient123"
 
+# Create Patient 4
+patient4 = User.create!(
+  full_name: "Priya Mehta",
+  phone_number: "+919123456786",
+  email: "priya.mehta@example.com",
+  password: "patient123",
+  password_confirmation: "patient123",
+  role: :patient,
+  location_city: "Delhi",
+  location_pin_code: "110019",
+  latitude: 28.5494,
+  longitude: 77.2500,
+  address: "12 Vasant Vihar, Delhi - 110019",
+  is_verified: true,
+  phone_verified_at: Time.current
+)
+
+puts "✓ Patient 4 created: #{patient4.full_name}"
+puts "  Phone: #{patient4.phone_number} / password: patient123"
+
+# Create Patient 5
+patient5 = User.create!(
+  full_name: "Vikram Singh",
+  phone_number: "+919123456785",
+  email: "vikram.singh@example.com",
+  password: "patient123",
+  password_confirmation: "patient123",
+  role: :patient,
+  location_city: "Delhi",
+  location_pin_code: "110024",
+  latitude: 28.5562,
+  longitude: 77.1000,
+  address: "45 Hauz Khas, Delhi - 110024",
+  is_verified: true,
+  phone_verified_at: Time.current
+)
+
+puts "✓ Patient 5 created: #{patient5.full_name}"
+puts "  Phone: #{patient5.phone_number} / password: patient123"
+
+# Create Patient 6
+patient6 = User.create!(
+  full_name: "Anjali Kapoor",
+  phone_number: "+919123456784",
+  email: "anjali.kapoor@example.com",
+  password: "patient123",
+  password_confirmation: "patient123",
+  role: :patient,
+  location_city: "Delhi",
+  location_pin_code: "110016",
+  latitude: 28.5355,
+  longitude: 77.2644,
+  address: "78 Lajpat Nagar, Delhi - 110016",
+  is_verified: true,
+  phone_verified_at: Time.current
+)
+
+puts "✓ Patient 6 created: #{patient6.full_name}"
+puts "  Phone: #{patient6.phone_number} / password: patient123"
+
+# Create Patient 7
+patient7 = User.create!(
+  full_name: "Rohan Malhotra",
+  phone_number: "+919123456783",
+  email: "rohan.malhotra@example.com",
+  password: "patient123",
+  password_confirmation: "patient123",
+  role: :patient,
+  location_city: "Delhi",
+  location_pin_code: "110003",
+  latitude: 28.6448,
+  longitude: 77.2167,
+  address: "23 Karol Bagh, Delhi - 110003",
+  is_verified: true,
+  phone_verified_at: Time.current
+)
+
+puts "✓ Patient 7 created: #{patient7.full_name}"
+puts "  Phone: #{patient7.phone_number} / password: patient123"
+
+# Create Patient 8
+patient8 = User.create!(
+  full_name: "Kavita Joshi",
+  phone_number: "+919123456782",
+  email: "kavita.joshi@example.com",
+  password: "patient123",
+  password_confirmation: "patient123",
+  role: :patient,
+  location_city: "Delhi",
+  location_pin_code: "110007",
+  latitude: 28.6304,
+  longitude: 77.2177,
+  address: "56 Rajendra Place, Delhi - 110007",
+  is_verified: true,
+  phone_verified_at: Time.current
+)
+
+puts "✓ Patient 8 created: #{patient8.full_name}"
+puts "  Phone: #{patient8.phone_number} / password: patient123"
+
+# Create Patient 9
+patient9 = User.create!(
+  full_name: "Arjun Nair",
+  phone_number: "+919123456781",
+  email: "arjun.nair@example.com",
+  password: "patient123",
+  password_confirmation: "patient123",
+  role: :patient,
+  location_city: "Delhi",
+  location_pin_code: "110025",
+  latitude: 28.5383,
+  longitude: 77.2892,
+  address: "89 Nehru Place, Delhi - 110025",
+  is_verified: true,
+  phone_verified_at: Time.current
+)
+
+puts "✓ Patient 9 created: #{patient9.full_name}"
+puts "  Phone: #{patient9.phone_number} / password: patient123"
+
+# Create Patient 10
+patient10 = User.create!(
+  full_name: "Neha Gupta",
+  phone_number: "+919123456780",
+  email: "neha.gupta@example.com",
+  password: "patient123",
+  password_confirmation: "patient123",
+  role: :patient,
+  location_city: "Delhi",
+  location_pin_code: "110012",
+  latitude: 28.6692,
+  longitude: 77.4538,
+  address: "34 Mayur Vihar, Delhi - 110012",
+  is_verified: true,
+  phone_verified_at: Time.current
+)
+
+puts "✓ Patient 10 created: #{patient10.full_name}"
+puts "  Phone: #{patient10.phone_number} / password: patient123"
+
 # Create Awards for Doctors
 puts "\nCreating doctor awards..."
 
@@ -385,12 +525,12 @@ upcoming_appointment1 = Appointment.create!(
 
 puts "✓ Upcoming appointment created (confirmed)"
 
-# Today's appointment for Doctor 2
-today_appointment = Appointment.create!(
+# Today's appointments for Dr. Priya Sharma
+today_appointment1 = Appointment.create!(
   doctor: doctor2,
   patient: patient2,
-  scheduled_start: Time.current.change(hour: 16, min: 0),
-  scheduled_end: Time.current.change(hour: 16, min: 20),
+  scheduled_start: Time.current.change(hour: 10, min: 0),
+  scheduled_end: Time.current.change(hour: 10, min: 20),
   status: :confirmed,
   payment_status: :partial_paid,
   initial_fee_amount: doctor2.consultation_fee_initial,
@@ -398,7 +538,91 @@ today_appointment = Appointment.create!(
   patient_notes: "Sore throat and ear pain follow-up"
 )
 
-puts "✓ Today's appointment created"
+today_appointment2 = Appointment.create!(
+  doctor: doctor2,
+  patient: patient4,
+  scheduled_start: Time.current.change(hour: 10, min: 20),
+  scheduled_end: Time.current.change(hour: 10, min: 40),
+  status: :confirmed,
+  payment_status: :paid,
+  initial_fee_amount: doctor2.consultation_fee_initial,
+  remaining_fee_amount: 0,
+  patient_notes: "Ear infection - persistent pain"
+)
+
+today_appointment3 = Appointment.create!(
+  doctor: doctor2,
+  patient: patient5,
+  scheduled_start: Time.current.change(hour: 10, min: 40),
+  scheduled_end: Time.current.change(hour: 11, min: 0),
+  status: :confirmed,
+  payment_status: :partial_paid,
+  initial_fee_amount: doctor2.consultation_fee_initial,
+  remaining_fee_amount: doctor2.consultation_fee_due,
+  patient_notes: "Nasal congestion and sinus issues"
+)
+
+today_appointment4 = Appointment.create!(
+  doctor: doctor2,
+  patient: patient6,
+  scheduled_start: Time.current.change(hour: 11, min: 0),
+  scheduled_end: Time.current.change(hour: 11, min: 20),
+  status: :confirmed,
+  payment_status: :paid,
+  initial_fee_amount: doctor2.consultation_fee_initial,
+  remaining_fee_amount: 0,
+  patient_notes: "Tonsillitis symptoms"
+)
+
+today_appointment5 = Appointment.create!(
+  doctor: doctor2,
+  patient: patient7,
+  scheduled_start: Time.current.change(hour: 11, min: 20),
+  scheduled_end: Time.current.change(hour: 11, min: 40),
+  status: :confirmed,
+  payment_status: :partial_paid,
+  initial_fee_amount: doctor2.consultation_fee_initial,
+  remaining_fee_amount: doctor2.consultation_fee_due,
+  patient_notes: "Hearing problems in right ear"
+)
+
+today_appointment6 = Appointment.create!(
+  doctor: doctor2,
+  patient: patient8,
+  scheduled_start: Time.current.change(hour: 16, min: 0),
+  scheduled_end: Time.current.change(hour: 16, min: 20),
+  status: :confirmed,
+  payment_status: :paid,
+  initial_fee_amount: doctor2.consultation_fee_initial,
+  remaining_fee_amount: 0,
+  patient_notes: "Throat pain and cough"
+)
+
+today_appointment7 = Appointment.create!(
+  doctor: doctor2,
+  patient: patient9,
+  scheduled_start: Time.current.change(hour: 16, min: 20),
+  scheduled_end: Time.current.change(hour: 16, min: 40),
+  status: :confirmed,
+  payment_status: :partial_paid,
+  initial_fee_amount: doctor2.consultation_fee_initial,
+  remaining_fee_amount: doctor2.consultation_fee_due,
+  patient_notes: "Recurring ear infections"
+)
+
+today_appointment8 = Appointment.create!(
+  doctor: doctor2,
+  patient: patient10,
+  scheduled_start: Time.current.change(hour: 16, min: 40),
+  scheduled_end: Time.current.change(hour: 17, min: 0),
+  status: :confirmed,
+  payment_status: :paid,
+  initial_fee_amount: doctor2.consultation_fee_initial,
+  remaining_fee_amount: 0,
+  patient_notes: "Nose bleeding issue"
+)
+
+puts "✓ Today's appointments created for Dr. Priya Sharma (8 appointments)"
 
 # Upcoming appointment with doctor3
 upcoming_appointment2 = Appointment.create!(
@@ -567,8 +791,8 @@ Notification.create!(
 Notification.create!(
   user: patient2,
   title: "Appointment Confirmed",
-  body: "Your appointment with Dr. #{doctor2.full_name} is confirmed for today at 4:00 PM",
-  metadata: { appointment_id: today_appointment.id, action: 'confirmed' }
+  body: "Your appointment with Dr. #{doctor2.full_name} is confirmed for today at 10:00 AM",
+  metadata: { appointment_id: today_appointment1.id, action: 'confirmed' }
 )
 
 Notification.create!(
@@ -653,6 +877,12 @@ puts "Patient 3 (Mumbai):"
 puts "  Phone: +919123456787"
 puts "  Password: patient123"
 puts "  Name: Rahul Verma"
+puts ""
+puts "Patient 4-10 (Delhi):"
+puts "  Phone: +919123456786 to +919123456780"
+puts "  Password: patient123"
+puts "  Names: Priya Mehta, Vikram Singh, Anjali Kapoor,"
+puts "         Rohan Malhotra, Kavita Joshi, Arjun Nair, Neha Gupta"
 puts ""
 puts "-"*60
 puts "Statistics:"
